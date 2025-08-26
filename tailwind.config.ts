@@ -18,40 +18,57 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				inter: ['Inter', 'sans-serif'],
+				sans: ['Inter', 'sans-serif'],
+			},
 			colors: {
+				/* Core System Colors */
 				border: 'hsl(var(--border))',
+				'border-subtle': 'hsl(var(--border-subtle))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
+				surface: 'hsl(var(--surface))',
+				'surface-elevated': 'hsl(var(--surface-elevated))',
 				foreground: 'hsl(var(--foreground))',
+				'foreground-muted': 'hsl(var(--foreground-muted))',
+				'foreground-subtle': 'hsl(var(--foreground-subtle))',
+				
+				/* Brand Colors */
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					light: 'hsl(var(--primary-light))',
+					dark: 'hsl(var(--primary-dark))',
 				},
-				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+				
+				/* Semantic Colors */
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					foreground: 'hsl(var(--success-foreground))',
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					foreground: 'hsl(var(--warning-foreground))',
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))'
+					foreground: 'hsl(var(--destructive-foreground))',
 				},
-				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
+				info: {
+					DEFAULT: 'hsl(var(--info))',
+					foreground: 'hsl(var(--info-foreground))',
 				},
-				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
-				},
-				popover: {
-					DEFAULT: 'hsl(var(--popover))',
-					foreground: 'hsl(var(--popover-foreground))'
-				},
+				
+				/* Card & Component Colors */
 				card: {
 					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))'
+					foreground: 'hsl(var(--card-foreground))',
+					border: 'hsl(var(--card-border))',
 				},
+				
+				/* Sidebar Colors */
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -60,8 +77,37 @@ export default {
 					accent: 'hsl(var(--sidebar-accent))',
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
-				}
+					ring: 'hsl(var(--sidebar-ring))',
+				},
+				
+				/* Status Colors */
+				status: {
+					pending: 'hsl(var(--status-pending))',
+					approved: 'hsl(var(--status-approved))',
+					rejected: 'hsl(var(--status-rejected))',
+					draft: 'hsl(var(--status-draft))',
+				},
+				
+				/* Auction & Event Colors */
+				auction: {
+					live: 'hsl(var(--auction-live))',
+					upcoming: 'hsl(var(--auction-upcoming))',
+					ended: 'hsl(var(--auction-ended))',
+				},
+				
+				/* Interactive States */
+				'hover-purple': 'hsl(var(--hover-purple))',
+				'active-purple': 'hsl(var(--active-purple))',
+			},
+			backgroundImage: {
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-card': 'var(--gradient-card)',
+			},
+			boxShadow: {
+				'purple': 'var(--shadow-purple)',
+				'purple-lg': 'var(--shadow-purple-lg)',
+				'card': 'var(--shadow-card)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

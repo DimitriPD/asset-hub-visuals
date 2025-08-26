@@ -1,96 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* AssetHub Design System - Purple-themed professional platform */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
+    /* Core Purple Brand Colors */
+    --primary: 267 82% 53%;                  /* Rich purple */
+    --primary-foreground: 0 0% 98%;          /* White text */
+    --primary-light: 267 71% 60%;            /* Lighter purple */
+    --primary-dark: 267 92% 45%;             /* Darker purple */
+    
+    /* Purple Gradient Variations */
+    --gradient-primary: linear-gradient(135deg, hsl(267, 82%, 53%), hsl(280, 75%, 65%));
+    --gradient-hero: linear-gradient(135deg, hsl(267, 82%, 53%), hsl(280, 75%, 65%), hsl(295, 70%, 75%));
+    --gradient-card: linear-gradient(145deg, hsl(267, 25%, 97%), hsl(267, 45%, 95%));
+    
+    /* Background & Surface Colors */
+    --background: 267 25% 98%;               /* Very light purple-tinted white */
+    --surface: 0 0% 100%;                    /* Pure white for cards */
+    --surface-elevated: 267 35% 96%;        /* Slightly purple-tinted surface */
+    
+    /* Text Colors */
+    --foreground: 267 25% 15%;               /* Dark purple-gray */
+    --foreground-muted: 267 15% 45%;        /* Muted purple-gray */
+    --foreground-subtle: 267 10% 65%;       /* Subtle gray */
+    
+    /* Semantic Colors */
+    --success: 142 71% 45%;                  /* Green */
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 58%;                   /* Orange */
+    --warning-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;                /* Red */
+    --destructive-foreground: 0 0% 98%;
+    --info: 217 91% 60%;                     /* Blue */
+    --info-foreground: 0 0% 98%;
+    
+    /* Interface Elements */
+    --border: 267 25% 88%;                   /* Light purple border */
+    --border-subtle: 267 15% 92%;           /* Very subtle border */
+    --input: 267 25% 94%;                    /* Input background */
+    --ring: 267 82% 53%;                     /* Focus ring matches primary */
+    
+    /* Card & Component Colors */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    --card-foreground: 267 25% 15%;
+    --card-border: 267 20% 90%;
+    
+    /* Sidebar Specific */
+    --sidebar-background: 267 45% 8%;        /* Dark purple sidebar */
+    --sidebar-foreground: 267 25% 85%;      /* Light text on dark */
+    --sidebar-primary: 267 82% 53%;         /* Primary purple */
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 267 35% 12%;          /* Slightly lighter than bg */
+    --sidebar-accent-foreground: 267 25% 85%;
+    --sidebar-border: 267 35% 15%;          /* Subtle border */
+    --sidebar-ring: 267 82% 53%;
+    
+    /* Status & State Colors */
+    --status-pending: 38 92% 58%;           /* Orange for pending */
+    --status-approved: 142 71% 45%;         /* Green for approved */
+    --status-rejected: 0 84% 60%;           /* Red for rejected */
+    --status-draft: 267 15% 60%;            /* Gray for draft */
+    
+    /* Auction & Event Colors */
+    --auction-live: 0 84% 60%;              /* Red for live auctions */
+    --auction-upcoming: 267 82% 53%;       /* Purple for upcoming */
+    --auction-ended: 267 15% 60%;          /* Gray for ended */
+    
+    /* Interactive States */
+    --hover-purple: 267 82% 55%;
+    --active-purple: 267 92% 48%;
+    
+    /* Shadows */
+    --shadow-purple: 0 10px 25px -5px hsl(267 82% 53% / 0.1);
+    --shadow-purple-lg: 0 20px 40px -10px hsl(267 82% 53% / 0.15);
+    --shadow-card: 0 1px 3px 0 hsl(267 25% 15% / 0.1);
+    
+    --radius: 0.75rem;                       /* Slightly more rounded */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 267 45% 6%;
+    --surface: 267 35% 8%;
+    --surface-elevated: 267 30% 10%;
+    
+    --foreground: 267 25% 90%;
+    --foreground-muted: 267 15% 70%;
+    --foreground-subtle: 267 10% 55%;
+    
+    --border: 267 25% 18%;
+    --border-subtle: 267 15% 15%;
+    --input: 267 25% 12%;
+    
+    --card: 267 35% 8%;
+    --card-foreground: 267 25% 90%;
+    --card-border: 267 20% 15%;
+    
+    --sidebar-background: 267 50% 4%;
+    --sidebar-foreground: 267 25% 85%;
+    --sidebar-accent: 267 40% 8%;
+    --sidebar-border: 267 35% 12%;
   }
 }
 
