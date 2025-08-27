@@ -7,7 +7,12 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import Assets from "./pages/Assets";
+import AssetCatalog from "./pages/AssetCatalog";
+import AssetManagement from "./pages/AssetManagement";
+import PurchaseFlow from "./pages/PurchaseFlow";
+import PurchaseHistory from "./pages/PurchaseHistory";
+import Employees from "./pages/Employees";
+import Customization from "./pages/Customization";
 import Reservations from "./pages/Reservations";
 import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
@@ -43,8 +48,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
   
+  const { currentRole } = useAuth();
+  
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    // Redirect based on role: regular users go to assets, admins go to dashboard
+    return <Navigate to={currentRole === 'admin' ? "/dashboard" : "/assets"} replace />;
   }
   
   return <>{children}</>;
@@ -81,7 +89,7 @@ const App = () => (
               path="/assets" 
               element={
                 <ProtectedRoute>
-                  <Assets />
+                  <AssetCatalog />
                 </ProtectedRoute>
               } 
             />
@@ -89,7 +97,39 @@ const App = () => (
               path="/assets-management" 
               element={
                 <ProtectedRoute>
-                  <Assets />
+                  <AssetManagement />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/purchase/:assetId" 
+              element={
+                <ProtectedRoute>
+                  <PurchaseFlow />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/purchase-history" 
+              element={
+                <ProtectedRoute>
+                  <PurchaseHistory />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/employees" 
+              element={
+                <ProtectedRoute>
+                  <Employees />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/customization" 
+              element={
+                <ProtectedRoute>
+                  <Customization />
                 </ProtectedRoute>
               } 
             />
@@ -110,8 +150,8 @@ const App = () => (
               } 
             />
             
-            {/* Redirect root to dashboard */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            {/* Redirect root based on role */}
+            <Route path="/" element={<Navigate to="/assets" replace />} />
             
             {/* 404 Route */}
             <Route path="*" element={<NotFound />} />
