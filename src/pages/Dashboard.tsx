@@ -37,7 +37,7 @@ export default function Dashboard() {
   const recentActivity = [
     { id: 1, type: 'purchase', user: 'John Doe', asset: 'MacBook Pro', time: '2 min ago', status: 'completed' },
     { id: 2, type: 'auction', user: 'Sarah Wilson', asset: 'Office Chair', time: '5 min ago', status: 'bidding' },
-    { id: 3, type: 'reservation', user: 'Mike Johnson', asset: 'Conference Room A', time: '10 min ago', status: 'approved' },
+    // { id: 3, type: 'reservation', user: 'Mike Johnson', asset: 'Conference Room A', time: '10 min ago', status: 'approved' },
     { id: 4, type: 'sortition', user: 'Emily Brown', asset: 'Standing Desk', time: '15 min ago', status: 'pending' },
   ];
 

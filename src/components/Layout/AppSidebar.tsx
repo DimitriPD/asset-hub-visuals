@@ -41,7 +41,7 @@ export function AppSidebar() {
   const adminMenuItems = [
     { title: t('dashboard'), url: "/dashboard", icon: LayoutDashboard },
     { title: t('assetsManagement'), url: "/assets-management", icon: Package },
-    { title: t('reservations'), url: "/reservations", icon: Calendar },
+    // { title: t('reservations'), url: "/reservations", icon: Calendar },
     { title: t('employees'), url: "/employees", icon: Users },
     { title: t('customization'), url: "/customization", icon: Settings },
     { title: t('events'), url: "/events", icon: Trophy },
@@ -49,7 +49,7 @@ export function AppSidebar() {
 
   const userMenuItems = [
     { title: t('assets'), url: "/assets", icon: Package },
-    { title: t('reservations'), url: "/reservations", icon: Calendar },
+    // { title: t('reservations'), url: "/reservations", icon: Calendar },
     { title: t('events'), url: "/events", icon: Trophy },
     { title: t('purchaseHistory'), url: "/purchase-history", icon: ShoppingBag },
   ];
