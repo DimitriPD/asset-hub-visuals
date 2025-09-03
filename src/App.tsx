@@ -134,14 +134,6 @@ const App = () => (
               } 
             />
             <Route 
-              path="/reservations" 
-              element={
-                <ProtectedRoute>
-                  <Reservations />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
               path="/events" 
               element={
                 <ProtectedRoute>
