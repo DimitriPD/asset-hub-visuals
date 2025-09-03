@@ -58,14 +58,14 @@ export default function Dashboard() {
       icon: Package,
       description: "total inventory"
     },
-    {
-      title: "Active Reservations",
-      value: "86",
-      change: "+12.5%",
-      changeType: "increase",
-      icon: Calendar,
-      description: "pending approvals"
-    },
+    // {
+    //   title: "Active Reservations",
+    //   value: "86",
+    //   change: "+12.5%",
+    //   changeType: "increase",
+    //   icon: Calendar,
+    //   description: "pending approvals"
+    // },
     {
       title: "Total Employees",
       value: "548",
