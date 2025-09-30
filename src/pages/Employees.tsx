@@ -164,21 +164,21 @@ export default function Employees() {
             </DialogTrigger>
             <DialogContent className="bg-surface border-border-subtle max-w-md">
               <DialogHeader>
-                <DialogTitle className="text-foreground">Adicionar usuário ou grupo</DialogTitle>
+                <DialogTitle className="text-foreground">Add User or Group</DialogTitle>
                 <DialogDescription className="text-foreground-muted">
-                  Pesquise e selecione usuários ou grupos sincronizados da cloud
+                  Search and select synchronized users or groups from the cloud
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <Input
-                  placeholder="Buscar por nome ou email..."
+                  placeholder="Search by name or email..."
                   value={addSearchTerm}
                   onChange={e => setAddSearchTerm(e.target.value)}
                   className="bg-white"
                 />
                 <div className="max-h-64 overflow-y-auto divide-y divide-border-subtle">
                   {filteredCloudEntities.length === 0 ? (
-                    <div className="text-center py-8 text-foreground-muted">Nenhum resultado encontrado</div>
+                    <div className="text-center py-8 text-foreground-muted">No results found</div>
                   ) : (
                     filteredCloudEntities.map(entity => (
                       <div key={entity.id} className="flex items-center gap-3 py-3">
@@ -192,10 +192,10 @@ export default function Employees() {
                           {entity.email && (
                             <span className="block text-sm text-foreground-muted">{entity.email}</span>
                           )}
-                          <span className="block text-xs text-foreground-muted">{entity.type === "user" ? "Usuário" : "Grupo"}</span>
+                          <span className="block text-xs text-foreground-muted">{entity.type === "user" ? "User" : "Group"}</span>
                         </div>
                         <Button variant="outline" size="sm" disabled>
-                          Selecionar
+                          Select
                         </Button>
                       </div>
                     ))
