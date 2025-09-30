@@ -87,8 +87,8 @@ export default function Employees() {
   const cloudEntities = [
     { id: "u1", type: "user", name: "Carlos Silva", email: "carlos@cloud.com" },
     { id: "u2", type: "user", name: "Fernanda Souza", email: "fernanda@cloud.com" },
-    { id: "g1", type: "group", name: "Cloud Admins" },
-    { id: "g2", type: "group", name: "Cloud Marketing" },
+    { id: "g1", type: "group", name: "Cloud Architects" },
+    { id: "g2", type: "group", name: "Cloud QA" },
     { id: "u3", type: "user", name: "Roberto Lima", email: "roberto@cloud.com" },
     { id: "g3", type: "group", name: "Cloud Engineering" },
   ];
@@ -159,7 +159,7 @@ export default function Employees() {
           <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="default" onClick={() => setAddDialogOpen(true)}>
-                + Adicionar usuário ou grupo
+                + Add User or Group
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-surface border-border-subtle max-w-md">
