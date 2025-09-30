@@ -16,6 +16,8 @@ export default function Employees() {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [editingEmployee, setEditingEmployee] = useState<UserType | null>(null);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [addSearchTerm, setAddSearchTerm] = useState("");
 
   // Mock employees data
   const [employees, setEmployees] = useState<UserType[]>([
@@ -81,6 +83,20 @@ export default function Employees() {
     }
   ]);
 
+  // Mock cloud users and groups
+  const cloudEntities = [
+    { id: "u1", type: "user", name: "Carlos Silva", email: "carlos@cloud.com" },
+    { id: "u2", type: "user", name: "Fernanda Souza", email: "fernanda@cloud.com" },
+    { id: "g1", type: "group", name: "Cloud Admins" },
+    { id: "g2", type: "group", name: "Cloud Marketing" },
+    { id: "u3", type: "user", name: "Roberto Lima", email: "roberto@cloud.com" },
+    { id: "g3", type: "group", name: "Cloud Engineering" },
+  ];
+  const filteredCloudEntities = cloudEntities.filter(e =>
+    e.name.toLowerCase().includes(addSearchTerm.toLowerCase()) ||
+    (e.email && e.email.toLowerCase().includes(addSearchTerm.toLowerCase()))
+  );
+
   const filteredEmployees = employees.filter(employee =>
     employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -140,6 +156,54 @@ export default function Employees() {
           <Badge variant="outline" className="text-foreground-muted">
             Total: {employees.length} employees
           </Badge>
+          <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="default" onClick={() => setAddDialogOpen(true)}>
+                + Adicionar usuário ou grupo
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-surface border-border-subtle max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-foreground">Adicionar usuário ou grupo</DialogTitle>
+                <DialogDescription className="text-foreground-muted">
+                  Pesquise e selecione usuários ou grupos sincronizados da cloud
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <Input
+                  placeholder="Buscar por nome ou email..."
+                  value={addSearchTerm}
+                  onChange={e => setAddSearchTerm(e.target.value)}
+                  className="bg-white"
+                />
+                <div className="max-h-64 overflow-y-auto divide-y divide-border-subtle">
+                  {filteredCloudEntities.length === 0 ? (
+                    <div className="text-center py-8 text-foreground-muted">Nenhum resultado encontrado</div>
+                  ) : (
+                    filteredCloudEntities.map(entity => (
+                      <div key={entity.id} className="flex items-center gap-3 py-3">
+                        {entity.type === "user" ? (
+                          <Users className="w-5 h-5 text-primary" />
+                        ) : (
+                          <Shield className="w-5 h-5 text-secondary" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <span className="font-medium text-foreground">{entity.name}</span>
+                          {entity.email && (
+                            <span className="block text-sm text-foreground-muted">{entity.email}</span>
+                          )}
+                          <span className="block text-xs text-foreground-muted">{entity.type === "user" ? "Usuário" : "Grupo"}</span>
+                        </div>
+                        <Button variant="outline" size="sm" disabled>
+                          Selecionar
+                        </Button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
@@ -228,9 +292,9 @@ export default function Employees() {
                               <Label>Access Groups</Label>
                               <div className="flex flex-wrap gap-2 mt-2">
                                 {employee.accessGroups.map(group => (
-                                  <Badge key={group} variant="outline">
-                                    {group}
-                                  </Badge>
+                                  <div key={group} className="mr-1 inline-block">
+                                    <Badge variant="outline">{group}</Badge>
+                                  </div>
                                 ))}
                               </div>
                             </div>
@@ -318,9 +382,9 @@ export default function Employees() {
                               <Label>Access Groups</Label>
                               <div className="flex flex-wrap gap-2 mt-2">
                                 {employee.accessGroups.map(group => (
-                                  <Badge key={group} variant="outline">
-                                    {group}
-                                  </Badge>
+                                  <div key={group} className="mr-1 inline-block">
+                                    <Badge variant="outline">{group}</Badge>
+                                  </div>
                                 ))}
                               </div>
                             </div>
