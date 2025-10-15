@@ -16,6 +16,7 @@ import Customization from "./pages/Customization";
 import Reservations from "./pages/Reservations";
 import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
+import SecurityPolicies from "./pages/SecurityPolicies";
 import { AppSidebar } from "@/components/Layout/AppSidebar";
 import { Header } from "@/components/Layout/Header";
 
@@ -138,6 +139,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Events />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/security-policies" 
+              element={
+                <ProtectedRoute>
+                  <SecurityPolicies />
                 </ProtectedRoute>
               } 
             />
