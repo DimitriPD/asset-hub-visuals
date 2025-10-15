@@ -285,7 +285,7 @@ export const translations = {
     meeting: 'Reunião',
     recess: 'Recesso',
     eventTitle: 'Título do Evento',
-    eventType: 'Tipo de Evento',
+    eventType: 'Tipo do Evento',
     description: 'Descrição',
     startDateTime: 'Data e Hora de Início',
     endDateTime: 'Data e Hora de Fim',
@@ -304,16 +304,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Check for stored auth data
     const storedUser = localStorage.getItem('assethub_user');
     const storedRole = localStorage.getItem('assethub_role');
-    const storedLang = localStorage.getItem('assethub_language');
-    
+    // Força o idioma padrão para inglês
+    setLanguage('en');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
     if (storedRole) {
       setCurrentRole(storedRole as 'admin' | 'user');
-    }
-    if (storedLang) {
-      setLanguage(storedLang as 'en' | 'es' | 'pt');
     }
   }, []);
 
