@@ -75,7 +75,7 @@ export function Header() {
         {/* Language Selector */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-2">
+            <Button variant="ghost" size="sm" className="gap-2" aria-label={t('changeLanguage') || 'Change Language'}>
               <Globe className="w-4 h-4" />
               {languages.find(l => l.code === language)?.flag}
             </Button>
@@ -86,6 +86,7 @@ export function Header() {
                 key={lang.code}
                 onClick={() => setLanguage(lang.code as 'en' | 'es' | 'pt')}
                 className={`cursor-pointer ${language === lang.code ? 'bg-surface-elevated' : ''}`}
+                aria-label={lang.name}
               >
                 <span className="mr-2">{lang.flag}</span>
                 {lang.name}

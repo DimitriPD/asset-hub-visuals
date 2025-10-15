@@ -74,6 +74,7 @@ export const translations = {
     delete: 'Delete',
     add: 'Add',
     view: 'View',
+    changeLanguage: 'Change Language',
     
     // Auth
     signInSSO: 'Sign in with SSO',
@@ -141,6 +142,7 @@ export const translations = {
     delete: 'Eliminar',
     add: 'Agregar',
     view: 'Ver',
+    changeLanguage: 'Cambiar Idioma',
     
     // Auth
     signInSSO: 'Iniciar sesión con SSO',
@@ -208,6 +210,7 @@ export const translations = {
     delete: 'Excluir',
     add: 'Adicionar',
     view: 'Visualizar',
+    changeLanguage: 'Alterar Idioma',
     
     // Auth
     signInSSO: 'Entrar com SSO',
