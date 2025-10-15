@@ -60,6 +60,7 @@ export const translations = {
     customization: 'Customization',
     events: 'Events',
     purchaseHistory: 'Purchase History',
+    securityPolicies: 'Security Policies',
     
     // Common
     login: 'Login',
@@ -129,7 +130,17 @@ export const translations = {
     endDateTime: 'End Date & Time',
     holidayNossaSenhoraAparecida: 'Nossa Senhora Aparecida',
     meetingReuniaoGeral: 'General Meeting',
-    recessRecessoAdministrativo: 'Administrative Recess'
+    recessRecessoAdministrativo: 'Administrative Recess',
+
+    // Security Policies
+    logicalRecord: 'Logical Record',
+    referencedItems: 'Referenced Items',
+    code: 'Code',
+    effectiveDate: 'Effective Date',
+    policyStatus: 'Status',
+    policyCategory: 'Category',
+    documentLink: 'Document Link',
+    document: 'Document'
   },
   es: {
     // Navigation
@@ -141,6 +152,7 @@ export const translations = {
     customization: 'Personalización',
     events: 'Eventos',
     purchaseHistory: 'Historial de Compras',
+    securityPolicies: 'Políticas de Seguridad',
     
     // Common
     login: 'Iniciar Sesión',
@@ -210,7 +222,17 @@ export const translations = {
     endDateTime: 'Fecha y Hora de Fin',
     holidayNossaSenhoraAparecida: 'Nuestra Señora Aparecida',
     meetingReuniaoGeral: 'Reunión General',
-    recessRecessoAdministrativo: 'Receso Administrativo'
+    recessRecessoAdministrativo: 'Receso Administrativo',
+
+    // Security Policies
+    logicalRecord: 'Registro Lógico',
+    referencedItems: 'Ítems Referenciados',
+    code: 'Código',
+    effectiveDate: 'Fecha de Vigencia',
+    policyStatus: 'Estado',
+    policyCategory: 'Categoría',
+    documentLink: 'Enlace al Documento',
+    document: 'Documento'
   },
   pt: {
     // Navigation
@@ -222,6 +244,7 @@ export const translations = {
     customization: 'Personalização',
     events: 'Eventos',
     purchaseHistory: 'Histórico de Compras',
+    securityPolicies: 'Políticas de Segurança',
     
     // Common
     login: 'Entrar',
@@ -291,7 +314,17 @@ export const translations = {
     endDateTime: 'Data e Hora de Fim',
     holidayNossaSenhoraAparecida: 'Nossa Senhora Aparecida',
     meetingReuniaoGeral: 'Reunião Geral',
-    recessRecessoAdministrativo: 'Recesso Administrativo'
+    recessRecessoAdministrativo: 'Recesso Administrativo',
+
+    // Security Policies
+    logicalRecord: 'Registro Lógico',
+    referencedItems: 'Itens Referenciados',
+    code: 'Código',
+    effectiveDate: 'Data de Vigência',
+    policyStatus: 'Status',
+    policyCategory: 'Categoria',
+    documentLink: 'Link do Documento',
+    document: 'Documento'
   }
 };
 

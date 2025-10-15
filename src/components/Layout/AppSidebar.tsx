@@ -45,7 +45,7 @@ export function AppSidebar() {
     { title: t('employees'), url: "/employees", icon: Users },
     { title: t('customization'), url: "/customization", icon: Settings },
     { title: t('events'), url: "/events", icon: Trophy },
-    { title: 'Políticas de Segurança', url: "/security-policies", icon: Settings },
+    { title: t('securityPolicies'), url: "/security-policies", icon: Settings },
   ];
 
   const userMenuItems = [
@@ -53,7 +53,7 @@ export function AppSidebar() {
     // { title: t('reservations'), url: "/reservations", icon: Calendar },
     { title: t('events'), url: "/events", icon: Trophy },
     { title: t('purchaseHistory'), url: "/purchase-history", icon: ShoppingBag },
-    { title: 'Políticas de Segurança', url: "/security-policies", icon: Settings },
+    { title: t('securityPolicies'), url: "/security-policies", icon: Settings },
   ];
 
   const menuItems = currentRole === 'admin' ? adminMenuItems : userMenuItems;
