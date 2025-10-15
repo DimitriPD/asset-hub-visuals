@@ -72,7 +72,7 @@ export default function Dashboard() {
       change: "+2.4%",
       changeType: "increase",
       icon: Users,
-      description: "registered users"
+      description: "registered users from last month"
     }
   ];
 
