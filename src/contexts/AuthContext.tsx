@@ -116,7 +116,20 @@ export const translations = {
     rejected: 'Rejected',
     completed: 'Completed',
     active: 'Active',
-    inactive: 'Inactive'
+    inactive: 'Inactive',
+
+    // Corporate Calendar
+    holiday: 'Holiday',
+    meeting: 'Meeting',
+    recess: 'Recess',
+    eventTitle: 'Event Title',
+    eventType: 'Event Type',
+    description: 'Description',
+    startDateTime: 'Start Date & Time',
+    endDateTime: 'End Date & Time',
+    holidayNossaSenhoraAparecida: 'Nossa Senhora Aparecida',
+    meetingReuniaoGeral: 'General Meeting',
+    recessRecessoAdministrativo: 'Administrative Recess'
   },
   es: {
     // Navigation
@@ -184,7 +197,20 @@ export const translations = {
     rejected: 'Rechazado',
     completed: 'Completado',
     active: 'Activo',
-    inactive: 'Inactivo'
+    inactive: 'Inactivo',
+
+    // Corporate Calendar
+    holiday: 'Feriado',
+    meeting: 'Reunión',
+    recess: 'Receso',
+    eventTitle: 'Título del Evento',
+    eventType: 'Tipo de Evento',
+    description: 'Descripción',
+    startDateTime: 'Fecha y Hora de Inicio',
+    endDateTime: 'Fecha y Hora de Fin',
+    holidayNossaSenhoraAparecida: 'Nuestra Señora Aparecida',
+    meetingReuniaoGeral: 'Reunión General',
+    recessRecessoAdministrativo: 'Receso Administrativo'
   },
   pt: {
     // Navigation
@@ -252,7 +278,20 @@ export const translations = {
     rejected: 'Rejeitado',
     completed: 'Concluído',
     active: 'Ativo',
-    inactive: 'Inativo'
+    inactive: 'Inativo',
+
+    // Corporate Calendar
+    holiday: 'Feriado',
+    meeting: 'Reunião',
+    recess: 'Recesso',
+    eventTitle: 'Título do Evento',
+    eventType: 'Tipo de Evento',
+    description: 'Descrição',
+    startDateTime: 'Data e Hora de Início',
+    endDateTime: 'Data e Hora de Fim',
+    holidayNossaSenhoraAparecida: 'Nossa Senhora Aparecida',
+    meetingReuniaoGeral: 'Reunião Geral',
+    recessRecessoAdministrativo: 'Recesso Administrativo'
   }
 };
 

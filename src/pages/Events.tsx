@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
 
 interface Event {
   id: string;
@@ -58,6 +59,15 @@ export default function Events() {
   const [bidAmount, setBidAmount] = useState("");
   const [chatMessage, setChatMessage] = useState("");
   const [isCreateEventOpen, setIsCreateEventOpen] = useState(false);
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+
+  // Mocked corporate calendar events (AIE)
+  const corporateCalendar = [
+    { date: '2025-10-12', type: 'Feriado', reason: t('holidayNossaSenhoraAparecida'), color: 'bg-red-500' },
+    { date: '2025-10-13', type: 'Reunião', reason: t('meetingReuniaoGeral'), color: 'bg-blue-500' },
+    { date: '2025-10-14', type: 'Recesso', reason: t('recessRecessoAdministrativo'), color: 'bg-yellow-500' },
+  ];
 
   // Mock events data
   const [events, setEvents] = useState<Event[]>([
@@ -302,11 +312,11 @@ export default function Events() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label>Event Title</Label>
+                    <Label>{t('eventTitle')}</Label>
                     <Input placeholder="Enter event title" />
                   </div>
                   <div>
-                    <Label>Event Type</Label>
+                    <Label>{t('eventType')}</Label>
                     <Select>
                       <SelectTrigger>
                         <SelectValue placeholder="Select type" />
@@ -319,18 +329,59 @@ export default function Events() {
                   </div>
                 </div>
                 <div>
-                  <Label>Description</Label>
+                  <Label>{t('description')}</Label>
                   <Textarea placeholder="Event description" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label>Start Date & Time</Label>
-                    <Input type="datetime-local" />
+                    <Label>{t('startDateTime')}</Label>
+                    <Calendar
+                      mode="single"
+                      selected={startDate}
+                      onSelect={setStartDate}
+                      disabled={(date) => {
+                        const d = date.toISOString().slice(0, 10);
+                        return corporateCalendar.some(ev => ev.date === d);
+                      }}
+                      modifiers={{
+                        feriado: (date) => corporateCalendar.some(ev => ev.date === date.toISOString().slice(0, 10) && ev.type === 'Feriado'),
+                        reuniao: (date) => corporateCalendar.some(ev => ev.date === date.toISOString().slice(0, 10) && ev.type === 'Reunião'),
+                        recesso: (date) => corporateCalendar.some(ev => ev.date === date.toISOString().slice(0, 10) && ev.type === 'Recesso'),
+                      }}
+                      modifiersClassNames={{
+                        feriado: 'bg-red-500 text-white',
+                        reuniao: 'bg-blue-500 text-white',
+                        recesso: 'bg-yellow-500 text-black',
+                      }}
+                    />
                   </div>
                   <div>
-                    <Label>End Date & Time</Label>
-                    <Input type="datetime-local" />
+                    <Label>{t('endDateTime')}</Label>
+                    <Calendar
+                      mode="single"
+                      selected={endDate}
+                      onSelect={setEndDate}
+                      disabled={(date) => {
+                        const d = date.toISOString().slice(0, 10);
+                        return corporateCalendar.some(ev => ev.date === d);
+                      }}
+                      modifiers={{
+                        feriado: (date) => corporateCalendar.some(ev => ev.date === date.toISOString().slice(0, 10) && ev.type === 'Feriado'),
+                        reuniao: (date) => corporateCalendar.some(ev => ev.date === date.toISOString().slice(0, 10) && ev.type === 'Reunião'),
+                        recesso: (date) => corporateCalendar.some(ev => ev.date === date.toISOString().slice(0, 10) && ev.type === 'Recesso'),
+                      }}
+                      modifiersClassNames={{
+                        feriado: 'bg-red-500 text-white',
+                        reuniao: 'bg-blue-500 text-white',
+                        recesso: 'bg-yellow-500 text-black',
+                      }}
+                    />
                   </div>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <span className="w-3 h-3 bg-red-500 inline-block rounded-full mr-1"></span> {t('holiday')}
+                  <span className="w-3 h-3 bg-blue-500 inline-block rounded-full mx-2"></span> {t('meeting')}
+                  <span className="w-3 h-3 bg-yellow-500 inline-block rounded-full mx-2"></span> {t('recess')}
                 </div>
                 <Button onClick={() => setIsCreateEventOpen(false)}>Create Event</Button>
               </div>
