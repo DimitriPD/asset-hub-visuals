@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Upload, Palette, Filter, Save, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useAuth, useTranslation } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { customService, Palette as PaletteType } from "@/lib/services/customService";
 
 export default function Customization() {
   const { currentRole } = useAuth();
@@ -14,7 +16,9 @@ export default function Customization() {
   const { toast } = useToast();
   
   const [companyLogo, setCompanyLogo] = useState<string | null>(null);
-  const [selectedColorPalette, setSelectedColorPalette] = useState("purple");
+  const [selectedColorPalette, setSelectedColorPalette] = useState<string>("");
+  const [palettes, setPalettes] = useState<PaletteType[]>([]);
+  const [loading, setLoading] = useState(false);
   
   // Filter visibility settings
   const [filterSettings, setFilterSettings] = useState({
@@ -25,56 +29,41 @@ export default function Customization() {
     statusFilter: false, // Disabled as per requirements
   });
 
-  const colorPalettes = [
-    {
-      id: "purple",
-      name: "Purple (Default)",
-      primary: "#8B5CF6",
-      secondary: "#A78BFA",
-      accent: "#C4B5FD",
-      preview: "linear-gradient(135deg, #8B5CF6, #A78BFA)"
-    },
-    {
-      id: "blue",
-      name: "Ocean Blue",
-      primary: "#3B82F6",
-      secondary: "#60A5FA",
-      accent: "#93C5FD",
-      preview: "linear-gradient(135deg, #3B82F6, #60A5FA)"
-    },
-    {
-      id: "green",
-      name: "Forest Green",
-      primary: "#10B981",
-      secondary: "#34D399",
-      accent: "#6EE7B7",
-      preview: "linear-gradient(135deg, #10B981, #34D399)"
-    },
-    {
-      id: "orange",
-      name: "Sunset Orange",
-      primary: "#F59E0B",
-      secondary: "#FBBF24",
-      accent: "#FDE68A",
-      preview: "linear-gradient(135deg, #F59E0B, #FBBF24)"
-    },
-    {
-      id: "red",
-      name: "Ruby Red",
-      primary: "#EF4444",
-      secondary: "#F87171",
-      accent: "#FCA5A5",
-      preview: "linear-gradient(135deg, #EF4444, #F87171)"
-    },
-    {
-      id: "pink",
-      name: "Rose Pink",
-      primary: "#EC4899",
-      secondary: "#F472B6",
-      accent: "#F9A8D4",
-      preview: "linear-gradient(135deg, #EC4899, #F472B6)"
+  // Load palettes from API on mount
+  useEffect(() => {
+    loadPalettes();
+    loadSavedPalette();
+  }, []);
+
+  const loadPalettes = async () => {
+    try {
+      setLoading(true);
+      const data = await customService.getColorsPalette();
+      setPalettes(data);
+      
+      // Set selected palette if available
+      if (data.length > 0 && !selectedColorPalette) {
+        setSelectedColorPalette(data[0].id);
+      }
+    } catch (error) {
+      console.error('Error loading palettes:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load color palettes.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const loadSavedPalette = () => {
+    const saved = customService.loadSavedPalette();
+    if (saved) {
+      customService.applyColorPalette(saved);
+      setSelectedColorPalette(saved.id);
+    }
+  };
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -94,29 +83,103 @@ export default function Customization() {
     }));
   };
 
-  const handleSaveChanges = () => {
-    // In a real app, this would save to backend
-    toast({
-      title: "Settings Saved",
-      description: "Your customization settings have been saved successfully.",
-    });
+  const handleSaveChanges = async () => {
+    try {
+      setLoading(true);
+
+      // Save logo if changed
+      if (companyLogo) {
+        await customService.updateLogo({ logoUrl: companyLogo });
+      }
+
+      // Save catalog filters
+      await customService.updateCatalogFilters({
+        catalogFilterRulesJson: filterSettings
+      });
+
+      toast({
+        title: "Settings Saved",
+        description: "Your customization settings have been saved successfully.",
+      });
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save settings. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleResetToDefaults = () => {
-    setCompanyLogo(null);
-    setSelectedColorPalette("purple");
-    setFilterSettings({
-      categoryFilter: true,
-      priceFilter: true,
-      sortingFilter: true,
-      searchFilter: true,
-      statusFilter: false,
-    });
-    
-    toast({
-      title: "Settings Reset",
-      description: "All settings have been reset to default values.",
-    });
+  const handlePaletteUpdate = (paletteId: string) => {
+    try {
+      setSelectedColorPalette(paletteId);
+      
+      // Find the selected palette
+      const palette = palettes.find(p => p.id === paletteId);
+      
+      if (palette) {
+        // Apply colors immediately to the site (synchronous for instant visual feedback)
+        customService.applyColorPalette(palette);
+        
+        toast({
+          title: "Palette Applied",
+          description: `${palette.paletteName} colors have been applied to the site.`,
+        });
+      }
+    } catch (error) {
+      console.error('Error updating palette:', error);
+      toast({
+        title: "Error",
+        description: "Failed to apply color palette.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleResetToDefaults = async () => {
+    try {
+      setLoading(true);
+      setCompanyLogo(null);
+      setSelectedColorPalette("");
+      setFilterSettings({
+        categoryFilter: true,
+        priceFilter: true,
+        sortingFilter: true,
+        searchFilter: true,
+        statusFilter: false,
+      });
+      
+      // Clear saved palette and reset colors
+      customService.clearSavedPalette();
+      
+      // Reset on backend
+      await customService.updateCatalogFilters({
+        catalogFilterRulesJson: {
+          categoryFilter: true,
+          priceFilter: true,
+          sortingFilter: true,
+          searchFilter: true,
+          statusFilter: false,
+        }
+      });
+      
+      toast({
+        title: "Settings Reset",
+        description: "All settings have been reset to default values.",
+      });
+    } catch (error) {
+      console.error('Error resetting settings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to reset settings.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (currentRole !== 'admin') {
@@ -139,16 +202,48 @@ export default function Customization() {
           <p className="text-foreground-muted">Customize the platform appearance and functionality</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handleResetToDefaults}>
+          <Button variant="outline" onClick={handleResetToDefaults} disabled={loading}>
             <RotateCcw className="w-4 h-4 mr-2" />
             Reset to Defaults
           </Button>
-          <Button onClick={handleSaveChanges} className="bg-gradient-primary text-white border-none hover:opacity-90">
+          <Button onClick={handleSaveChanges} className="bg-gradient-primary text-white border-none hover:opacity-90" disabled={loading}>
             <Save className="w-4 h-4 mr-2" />
-            Save Changes
+            {loading ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </div>
+
+      {/* Live Preview Banner */}
+      {selectedColorPalette && (
+        <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
+          <CardContent className="py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-lg bg-primary shadow-lg flex items-center justify-center">
+                  <Palette className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Live Preview Active</h3>
+                  <p className="text-sm text-foreground-muted">
+                    Colors are being applied in real-time. Click "Save Changes" to persist.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <div className="w-8 h-8 rounded-full shadow-md transition-all duration-300" 
+                     style={{ backgroundColor: 'var(--color-primary)' }} 
+                     title="Primary Color" />
+                <div className="w-8 h-8 rounded-full shadow-md transition-all duration-300" 
+                     style={{ backgroundColor: 'var(--color-secondary)' }} 
+                     title="Secondary Color" />
+                <div className="w-8 h-8 rounded-full shadow-md transition-all duration-300" 
+                     style={{ backgroundColor: 'var(--color-tertiary)' }} 
+                     title="Tertiary Color" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Company Branding */}
@@ -281,57 +376,139 @@ export default function Customization() {
             Color Palette
           </CardTitle>
           <CardDescription className="text-foreground-muted">
-            Choose a color scheme for the platform interface
+            Choose a color scheme for the platform interface. Colors will be applied instantly!
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {colorPalettes.map((palette) => (
-              <div
-                key={palette.id}
-                className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                  selectedColorPalette === palette.id
-                    ? 'border-primary bg-primary/5'
-                    : 'border-border-subtle hover:border-primary/50'
-                }`}
-                onClick={() => setSelectedColorPalette(palette.id)}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-16 h-16 rounded-lg shadow-sm"
-                    style={{ background: palette.preview }}
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-medium text-foreground">{palette.name}</h3>
-                    <div className="flex gap-2 mt-2">
-                      <div
-                        className="w-4 h-4 rounded-full border border-white shadow-sm"
-                        style={{ backgroundColor: palette.primary }}
-                        title="Primary"
-                      />
-                      <div
-                        className="w-4 h-4 rounded-full border border-white shadow-sm"
-                        style={{ backgroundColor: palette.secondary }}
-                        title="Secondary"
-                      />
-                      <div
-                        className="w-4 h-4 rounded-full border border-white shadow-sm"
-                        style={{ backgroundColor: palette.accent }}
-                        title="Accent"
-                      />
-                    </div>
+        <CardContent className="space-y-6">
+          {/* Color Preview Section */}
+          {selectedColorPalette && (
+            <div className="p-6 rounded-lg border-2 border-primary/20 bg-gradient-to-br from-background to-primary/5">
+              <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                Live Preview
+              </h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <div className="h-24 rounded-lg bg-primary shadow-lg flex items-center justify-center transition-all duration-300">
+                    <span className="text-primary-foreground font-semibold">Primary</span>
                   </div>
-                  {selectedColorPalette === palette.id && (
-                    <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  )}
+                  <div className="text-center">
+                    <p className="text-xs font-mono text-foreground-muted">
+                      {palettes.find(p => p.id === selectedColorPalette)?.primaryColor}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="h-24 rounded-lg shadow-lg flex items-center justify-center transition-all duration-300"
+                       style={{ backgroundColor: 'var(--color-secondary)', color: 'white' }}>
+                    <span className="font-semibold">Secondary</span>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs font-mono text-foreground-muted">
+                      {palettes.find(p => p.id === selectedColorPalette)?.secondaryColor}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="h-24 rounded-lg shadow-lg flex items-center justify-center transition-all duration-300"
+                       style={{ backgroundColor: 'var(--color-tertiary)', color: 'white' }}>
+                    <span className="font-semibold">Tertiary</span>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs font-mono text-foreground-muted">
+                      {palettes.find(p => p.id === selectedColorPalette)?.tertiaryColor}
+                    </p>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
+              
+              {/* Example UI Elements */}
+              <div className="mt-6 space-y-3">
+                <div className="flex gap-3 flex-wrap">
+                  <Button className="bg-primary hover:bg-primary/90">Primary Button</Button>
+                  <Button variant="outline" className="border-primary text-primary hover:bg-primary/10">Outline Button</Button>
+                  <Badge className="bg-primary text-primary-foreground">Badge</Badge>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {loading && palettes.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+              <p className="text-foreground-muted">Loading palettes...</p>
+            </div>
+          ) : palettes.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-foreground-muted">No color palettes available</p>
+            </div>
+          ) : (
+            <div>
+              <h4 className="font-semibold text-foreground mb-4">Available Palettes</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {palettes.map((palette) => {
+                // Create gradient from colors
+                const gradient = palette.primaryColor && palette.secondaryColor
+                  ? `linear-gradient(135deg, ${palette.primaryColor}, ${palette.secondaryColor})`
+                  : palette.primaryColor
+                  ? palette.primaryColor
+                  : '#ccc';
+
+                return (
+                  <div
+                    key={palette.id}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedColorPalette === palette.id
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border-subtle hover:border-primary/50'
+                    }`}
+                    onClick={() => handlePaletteUpdate(palette.id)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-16 h-16 rounded-lg shadow-sm"
+                        style={{ background: gradient }}
+                      />
+                      <div className="flex-1">
+                        <h3 className="font-medium text-foreground">{palette.paletteName}</h3>
+                        <div className="flex gap-2 mt-2">
+                          {palette.primaryColor && (
+                            <div
+                              className="w-4 h-4 rounded-full border border-white shadow-sm"
+                              style={{ backgroundColor: palette.primaryColor }}
+                              title="Primary"
+                            />
+                          )}
+                          {palette.secondaryColor && (
+                            <div
+                              className="w-4 h-4 rounded-full border border-white shadow-sm"
+                              style={{ backgroundColor: palette.secondaryColor }}
+                              title="Secondary"
+                            />
+                          )}
+                          {palette.tertiaryColor && (
+                            <div
+                              className="w-4 h-4 rounded-full border border-white shadow-sm"
+                              style={{ backgroundColor: palette.tertiaryColor }}
+                              title="Tertiary"
+                            />
+                          )}
+                        </div>
+                      </div>
+                      {selectedColorPalette === palette.id && (
+                        <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

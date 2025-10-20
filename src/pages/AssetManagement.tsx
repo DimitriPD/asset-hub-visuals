@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Plus, Edit, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,17 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth, useTranslation } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-
-interface Asset {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  image: string;
-  description: string;
-  quantity: number;
-  specifications: Record<string, string>;
-}
+import { assetService, Asset, AssetCreate, AssetUpdate } from "@/lib/services/assetService";
 
 export default function AssetManagement() {
   const { currentRole } = useAuth();
@@ -31,96 +21,56 @@ export default function AssetManagement() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isAddAssetOpen, setIsAddAssetOpen] = useState(false);
   const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<string[]>(['all']);
 
-  // Mock assets data - includes out of stock items for admin
-  const [assets, setAssets] = useState<Asset[]>([
-    {
-      id: "1",
-      name: "MacBook Pro 16\"",
-      category: "Electronics",
-      price: 2499,
-      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop",
-      description: "High-performance laptop for professional work",
-      quantity: 5,
-      specifications: {
-        "Processor": "M2 Pro chip",
-        "Memory": "32GB RAM",
-        "Storage": "1TB SSD"
+  // Form states for adding new asset
+  const [newAsset, setNewAsset] = useState<Partial<AssetCreate>>({
+    name: '',
+    description: '',
+    basePrice: 0,
+    availableQuantity: 0,
+    categoryId: '',
+    companyId: 'temp-company-id',
+  });
+
+  useEffect(() => {
+    loadAssets();
+  }, [selectedCategory, searchTerm]);
+
+  const loadAssets = async () => {
+    try {
+      setLoading(true);
+      const query: any = {
+        limit: 100,
+      };
+
+      if (selectedCategory !== 'all') {
+        query.categoryId = selectedCategory;
       }
-    },
-    {
-      id: "2", 
-      name: "Ergonomic Office Chair",
-      category: "Furniture",
-      price: 399,
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
-      description: "Comfortable ergonomic chair with lumbar support",
-      quantity: 12,
-      specifications: {
-        "Material": "Mesh back, fabric seat",
-        "Weight Capacity": "300 lbs",
-        "Warranty": "5 years"
+
+      if (searchTerm) {
+        query.searchTerm = searchTerm;
       }
-    },
-    {
-      id: "3",
-      name: "Dell UltraSharp Monitor 27\"",
-      category: "Electronics", 
-      price: 549,
-      image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=300&fit=crop",
-      description: "4K USB-C monitor with excellent color accuracy",
-      quantity: 2,
-      specifications: {
-        "Resolution": "3840 x 2160",
-        "Panel Type": "IPS",
-        "Connectivity": "USB-C, HDMI, DisplayPort"
-      }
-    },
-    {
-      id: "4",
-      name: "Standing Desk Converter",
-      category: "Furniture",
-      price: 299,
-      image: "https://images.unsplash.com/photo-1595515106969-1ce29566662e?w=400&h=300&fit=crop",
-      description: "Adjustable height desk converter for sit-stand working",
-      quantity: 0, // Out of stock
-      specifications: {
-        "Height Range": "4.5\" to 20\"",
-        "Weight Capacity": "35 lbs",
-        "Surface Size": "28\" x 23\""
-      }
-    },
-    {
-      id: "5",
-      name: "Wireless Noise-Canceling Headphones",
-      category: "Electronics",
-      price: 299,
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
-      description: "Premium wireless headphones with active noise cancellation",
-      quantity: 8,
-      specifications: {
-        "Battery Life": "30 hours",
-        "Noise Cancellation": "Active ANC",
-        "Connectivity": "Bluetooth 5.0"
-      }
-    },
-    {
-      id: "6",
-      name: "Conference Table",
-      category: "Furniture",
-      price: 1299,
-      image: "https://images.unsplash.com/photo-1581539250439-c96689b516dd?w=400&h=300&fit=crop",
-      description: "Large conference table for 8-10 people",
-      quantity: 3,
-      specifications: {
-        "Dimensions": "10ft x 4ft",
-        "Material": "Solid oak",
-        "Seating": "8-10 people"
-      }
+
+      const data = await assetService.getAll(query);
+      setAssets(data);
+
+      // Extract unique categories
+      const uniqueCategories = ['all', ...new Set(data.map(a => a.category))];
+      setCategories(uniqueCategories);
+    } catch (error) {
+      console.error('Error loading assets:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load assets. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-  ]);
-
-  const categories = ["all", "Electronics", "Furniture", "Vehicles", "Office Supplies"];
+  };
 
   const filteredAssets = assets.filter(asset => {
     const matchesSearch = asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -130,12 +80,77 @@ export default function AssetManagement() {
     return matchesSearch && matchesCategory;
   });
 
-  const handleDeleteAsset = (assetId: string) => {
-    setAssets(prev => prev.filter(asset => asset.id !== assetId));
-    toast({
-      title: "Asset Deleted",
-      description: "Asset has been removed from the inventory.",
-    });
+  const handleAddAsset = async () => {
+    try {
+      if (!newAsset.name || !newAsset.description || !newAsset.categoryId) {
+        toast({
+          title: "Validation Error",
+          description: "Please fill in all required fields.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      await assetService.create(newAsset as AssetCreate);
+      toast({
+        title: "Success",
+        description: "Asset has been added successfully.",
+      });
+      setIsAddAssetOpen(false);
+      setNewAsset({
+        name: '',
+        description: '',
+        basePrice: 0,
+        availableQuantity: 0,
+        categoryId: '',
+        companyId: 'temp-company-id',
+      });
+      loadAssets();
+    } catch (error) {
+      console.error('Error adding asset:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add asset. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateAsset = async (assetId: string, updates: AssetUpdate) => {
+    try {
+      await assetService.update(assetId, updates);
+      toast({
+        title: "Success",
+        description: "Asset has been updated successfully.",
+      });
+      setEditingAsset(null);
+      loadAssets();
+    } catch (error) {
+      console.error('Error updating asset:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update asset. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteAsset = async (assetId: string) => {
+    try {
+      await assetService.delete(assetId);
+      toast({
+        title: "Asset Deleted",
+        description: "Asset has been removed from the inventory.",
+      });
+      loadAssets();
+    } catch (error) {
+      console.error('Error deleting asset:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete asset. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const getStockStatus = (quantity: number) => {
@@ -150,6 +165,17 @@ export default function AssetManagement() {
         <div className="text-center py-20">
           <h2 className="text-2xl font-bold text-foreground mb-4">Access Restricted</h2>
           <p className="text-foreground-muted">Asset Management is only available for administrators.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="p-6 flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-foreground-muted">{t('loading')}</p>
         </div>
       </div>
     );
@@ -181,47 +207,67 @@ export default function AssetManagement() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="assetName">Asset Name *</Label>
-                  <Input id="assetName" placeholder="Enter asset name" />
+                  <Input 
+                    id="assetName" 
+                    placeholder="Enter asset name"
+                    value={newAsset.name}
+                    onChange={(e) => setNewAsset({...newAsset, name: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="price">Price *</Label>
-                  <Input id="price" type="number" placeholder="0.00" />
+                  <Input 
+                    id="price" 
+                    type="number" 
+                    placeholder="0.00"
+                    value={newAsset.basePrice}
+                    onChange={(e) => setNewAsset({...newAsset, basePrice: parseFloat(e.target.value)})}
+                  />
                 </div>
               </div>
               <div>
                 <Label htmlFor="category">Category *</Label>
-                <Select>
+                <Select value={newAsset.categoryId} onValueChange={(value) => setNewAsset({...newAsset, categoryId: value})}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Electronics">Electronics</SelectItem>
-                    <SelectItem value="Furniture">Furniture</SelectItem>
-                    <SelectItem value="Vehicles">Vehicles</SelectItem>
-                    <SelectItem value="Office Supplies">Office Supplies</SelectItem>
+                    {categories.filter(c => c !== 'all').map(category => (
+                      <SelectItem key={category} value={category}>{category}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
                 <Label htmlFor="description">Description *</Label>
-                <Textarea id="description" placeholder="Enter description" />
+                <Textarea 
+                  id="description" 
+                  placeholder="Enter description"
+                  value={newAsset.description}
+                  onChange={(e) => setNewAsset({...newAsset, description: e.target.value})}
+                />
               </div>
               <div>
                 <Label htmlFor="quantity">Quantity *</Label>
-                <Input id="quantity" type="number" placeholder="0" />
+                <Input 
+                  id="quantity" 
+                  type="number" 
+                  placeholder="0"
+                  value={newAsset.availableQuantity}
+                  onChange={(e) => setNewAsset({...newAsset, availableQuantity: parseInt(e.target.value)})}
+                />
               </div>
               <div>
-                <Label htmlFor="image">Image Upload</Label>
-                <div className="flex items-center gap-2">
-                  <Input id="image" type="file" accept="image/*" />
-                  <Button variant="outline" size="sm">
-                    <Upload className="w-4 h-4 mr-1" />
-                    Upload
-                  </Button>
-                </div>
+                <Label htmlFor="image">Image URL</Label>
+                <Input 
+                  id="image" 
+                  placeholder="https://..."
+                  value={newAsset.photos?.[0] || ''}
+                  onChange={(e) => setNewAsset({...newAsset, photos: [e.target.value]})}
+                />
               </div>
               <div className="flex gap-2">
-                <Button onClick={() => setIsAddAssetOpen(false)} className="flex-1">
+                <Button onClick={handleAddAsset} className="flex-1">
                   Save Asset
                 </Button>
                 <Button variant="outline" onClick={() => setIsAddAssetOpen(false)}>
@@ -317,24 +363,52 @@ export default function AssetManagement() {
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <Label htmlFor="editName">Asset Name</Label>
-                              <Input id="editName" defaultValue={asset.name} />
+                              <Input 
+                                id="editName" 
+                                defaultValue={asset.name}
+                                onChange={(e) => setEditingAsset({...asset, name: e.target.value})}
+                              />
                             </div>
                             <div>
                               <Label htmlFor="editPrice">Price</Label>
-                              <Input id="editPrice" type="number" defaultValue={asset.price} />
+                              <Input 
+                                id="editPrice" 
+                                type="number" 
+                                defaultValue={asset.price}
+                                onChange={(e) => setEditingAsset({...asset, price: parseFloat(e.target.value)})}
+                              />
                             </div>
                           </div>
                           <div>
                             <Label htmlFor="editDescription">Description</Label>
-                            <Textarea id="editDescription" defaultValue={asset.description} />
+                            <Textarea 
+                              id="editDescription" 
+                              defaultValue={asset.description}
+                              onChange={(e) => setEditingAsset({...asset, description: e.target.value})}
+                            />
                           </div>
                           <div>
                             <Label htmlFor="editQuantity">Quantity</Label>
-                            <Input id="editQuantity" type="number" defaultValue={asset.quantity} />
+                            <Input 
+                              id="editQuantity" 
+                              type="number" 
+                              defaultValue={asset.quantity}
+                              onChange={(e) => setEditingAsset({...asset, quantity: parseInt(e.target.value)})}
+                            />
                           </div>
                           <div className="flex gap-2">
-                            <Button className="flex-1">Save Changes</Button>
-                            <Button variant="outline">Cancel</Button>
+                            <Button 
+                              className="flex-1"
+                              onClick={() => editingAsset && handleUpdateAsset(asset.id, {
+                                name: editingAsset.name,
+                                description: editingAsset.description,
+                                basePrice: editingAsset.price,
+                                availableQuantity: editingAsset.quantity,
+                              })}
+                            >
+                              Save Changes
+                            </Button>
+                            <Button variant="outline" onClick={() => setEditingAsset(null)}>Cancel</Button>
                           </div>
                         </div>
                       </DialogContent>

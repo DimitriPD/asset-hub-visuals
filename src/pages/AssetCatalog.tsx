@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Eye, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,17 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { useAuth, useTranslation } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-
-interface Asset {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  image: string;
-  description: string;
-  quantity: number;
-  specifications: Record<string, string>;
-}
+import { assetService, Asset } from "@/lib/services/assetService";
 
 export default function AssetCatalog() {
   const { t } = useTranslation();
@@ -28,82 +18,47 @@ export default function AssetCatalog() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("name");
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<string[]>(['all']);
 
-  // Mock assets data - only in-stock items for regular users
-  const [assets] = useState<Asset[]>([
-    {
-      id: "1",
-      name: "MacBook Pro 16\"",
-      category: "Electronics",
-      price: 2499,
-      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop",
-      description: "High-performance laptop for professional work",
-      quantity: 5,
-      specifications: {
-        "Processor": "M2 Pro chip",
-        "Memory": "32GB RAM",
-        "Storage": "1TB SSD"
+  useEffect(() => {
+    loadAssets();
+  }, [selectedCategory, searchTerm]);
+
+  const loadAssets = async () => {
+    try {
+      setLoading(true);
+      const query: any = {
+        isAvailable: true,
+        limit: 100,
+      };
+
+      if (selectedCategory !== 'all') {
+        query.categoryId = selectedCategory;
       }
-    },
-    {
-      id: "2", 
-      name: "Ergonomic Office Chair",
-      category: "Furniture",
-      price: 399,
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
-      description: "Comfortable ergonomic chair with lumbar support",
-      quantity: 12,
-      specifications: {
-        "Material": "Mesh back, fabric seat",
-        "Weight Capacity": "300 lbs",
-        "Warranty": "5 years"
+
+      if (searchTerm) {
+        query.searchTerm = searchTerm;
       }
-    },
-    {
-      id: "3",
-      name: "Dell UltraSharp Monitor 27\"",
-      category: "Electronics", 
-      price: 549,
-      image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=300&fit=crop",
-      description: "4K USB-C monitor with excellent color accuracy",
-      quantity: 2,
-      specifications: {
-        "Resolution": "3840 x 2160",
-        "Panel Type": "IPS",
-        "Connectivity": "USB-C, HDMI, DisplayPort"
-      }
-    },
-    {
-      id: "5",
-      name: "Wireless Noise-Canceling Headphones",
-      category: "Electronics",
-      price: 299,
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
-      description: "Premium wireless headphones with active noise cancellation",
-      quantity: 8,
-      specifications: {
-        "Battery Life": "30 hours",
-        "Noise Cancellation": "Active ANC",
-        "Connectivity": "Bluetooth 5.0"
-      }
-    },
-    {
-      id: "6",
-      name: "Conference Table",
-      category: "Furniture",
-      price: 1299,
-      image: "https://images.unsplash.com/photo-1581539250439-c96689b516dd?w=400&h=300&fit=crop",
-      description: "Large conference table for 8-10 people",
-      quantity: 3,
-      specifications: {
-        "Dimensions": "10ft x 4ft",
-        "Material": "Solid oak",
-        "Seating": "8-10 people"
-      }
+
+      const data = await assetService.getAll(query);
+      setAssets(data);
+
+      // Extract unique categories
+      const uniqueCategories = ['all', ...new Set(data.map(a => a.category))];
+      setCategories(uniqueCategories);
+    } catch (error) {
+      console.error('Error loading assets:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load assets. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-  ]);
-
-  const categories = ["all", "Electronics", "Furniture", "Vehicles", "Office Supplies"];
+  };
 
   const filteredAssets = assets
     .filter(asset => {
@@ -126,9 +81,19 @@ export default function AssetCatalog() {
     });
 
   const handlePurchase = (assetId: string) => {
-    // Navigate to purchase flow
     navigate(`/purchase/${assetId}`);
   };
+
+  if (loading) {
+    return (
+      <div className="p-6 flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-foreground-muted">{t('loading')}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6 bg-background min-h-screen">

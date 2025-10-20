@@ -60,8 +60,8 @@ export function AppSidebar() {
 
   const getNavClass = (isActiveItem: boolean) =>
     isActiveItem 
-      ? "bg-sidebar-accent text-sidebar-primary-foreground font-medium border-l-2 border-sidebar-primary" 
-      : "hover:bg-sidebar-accent/50 text-sidebar-foreground";
+      ? "bg-sidebar-accent text-white font-medium border-l-4 border-primary" 
+      : "hover:bg-sidebar-accent/50 text-sidebar-foreground hover:text-primary transition-colors";
 
   return (
     <Sidebar
@@ -72,7 +72,10 @@ export function AppSidebar() {
         {/* Logo and Company Info */}
         <div className="p-4 border-b border-sidebar-border">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+            <div 
+              className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
+              style={{ background: 'var(--gradient-primary)' }}
+            >
               <Building className="w-5 h-5 text-white" />
             </div>
             {!collapsed && (
@@ -99,8 +102,7 @@ export function AppSidebar() {
                   <p className="text-sm font-medium text-sidebar-foreground">{user.name}</p>
                   <p className="text-xs text-sidebar-foreground/70">{user.department}</p>
                   <Badge 
-                    variant="secondary" 
-                    className="mt-1 text-xs bg-primary/20 text-primary border-primary/30"
+                    className="mt-1 text-xs bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                   >
                     {currentRole === 'admin' ? t('administrator') : t('regularUser')}
                   </Badge>
@@ -115,7 +117,7 @@ export function AppSidebar() {
                   variant="outline"
                   size="sm"
                   onClick={() => switchRole(currentRole === 'admin' ? 'user' : 'admin')}
-                  className="w-full justify-start gap-2 text-xs bg-sidebar-accent border-sidebar-border hover:bg-sidebar-accent/80"
+                  className="w-full justify-start gap-2 text-xs border-primary/30 text-primary hover:bg-primary/10 hover:text-primary hover:border-primary transition-colors"
                 >
                   <ToggleLeft className="w-3 h-3" />
                   {currentRole === 'admin' ? t('switchToUser') : t('switchToAdmin')}
@@ -139,7 +141,9 @@ export function AppSidebar() {
                       to={item.url} 
                       className={getNavClass(isActive(item.url))}
                     >
-                      <item.icon className="w-4 h-4" />
+                      <item.icon 
+                        className={`w-4 h-4 ${isActive(item.url) ? 'text-primary' : ''}`} 
+                      />
                       {!collapsed && <span className="ml-3">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
@@ -153,8 +157,8 @@ export function AppSidebar() {
         <div className="p-4 border-t border-sidebar-border">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Bell className="w-5 h-5 text-sidebar-foreground" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full"></div>
+              <Bell className="w-5 h-5 text-sidebar-foreground hover:text-primary transition-colors" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse"></div>
             </div>
             {!collapsed && (
               <span className="text-sm text-sidebar-foreground">Notifications</span>

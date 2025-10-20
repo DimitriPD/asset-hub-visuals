@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth, useTranslation } from "@/contexts/AuthContext";
@@ -16,6 +17,20 @@ import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
 export default function Dashboard() {
   const { currentRole } = useAuth();
   const { t } = useTranslation();
+  const [paletteVersion, setPaletteVersion] = useState(0);
+
+  // Listen for palette changes
+  useEffect(() => {
+    const handlePaletteChange = () => {
+      setPaletteVersion(prev => prev + 1);
+    };
+    
+    window.addEventListener('paletteChanged', handlePaletteChange);
+    
+    return () => {
+      window.removeEventListener('paletteChanged', handlePaletteChange);
+    };
+  }, []);
 
   // Mock data for charts
   const salesData = [
@@ -27,11 +42,26 @@ export default function Dashboard() {
     { month: 'Jun', sales: 2390, purchases: 3800 },
   ];
 
+  // Get computed CSS variables for dynamic colors
+  const getPaletteColor = (variable: string) => {
+    if (typeof window !== 'undefined') {
+      const root = document.documentElement;
+      const value = getComputedStyle(root).getPropertyValue(variable).trim();
+      // Convert HSL to hex for charts if needed
+      if (value.includes(' ')) {
+        // It's HSL format, convert to usable color
+        return `hsl(${value})`;
+      }
+      return value || '#8B5CF6'; // Fallback
+    }
+    return '#8B5CF6';
+  };
+
   const assetCategories = [
-    { name: 'Electronics', value: 400, color: '#8B5CF6' },
-    { name: 'Furniture', value: 300, color: '#A78BFA' },
-    { name: 'Vehicles', value: 200, color: '#C4B5FD' },
-    { name: 'Office Supplies', value: 100, color: '#DDD6FE' },
+    { name: 'Electronics', value: 400, color: getPaletteColor('--color-primary') },
+    { name: 'Furniture', value: 300, color: getPaletteColor('--color-secondary') },
+    { name: 'Vehicles', value: 200, color: getPaletteColor('--color-tertiary') },
+    { name: 'Office Supplies', value: 100, color: `hsl(var(--primary-light))` },
   ];
 
   const recentActivity = [

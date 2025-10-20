@@ -1,4 +1,39 @@
-# Welcome to your Lovable project
+# 🏢 Asset Hub - Enterprise Asset Management Platform
+
+Uma plataforma moderna e completa para gerenciamento de ativos empresariais com sistema avançado de customização visual.
+
+## ✨ Features Principais
+
+- 🎨 **Sistema de Paleta de Cores Dinâmico** - Customize toda a interface em tempo real
+- 📊 **Dashboard Interativo** - Gráficos e métricas em tempo real
+- 📦 **Gerenciamento de Ativos** - CRUD completo com filtros avançados
+- 👥 **Gestão de Funcionários** - Controle de usuários e permissões
+- 🎭 **Eventos e Leilões** - Sistema completo de eventos
+- 🔐 **Autenticação JWT** - Login seguro com múltiplas roles
+- 🌍 **Multi-idioma** - Suporte para PT, EN, ES
+- 📱 **Responsivo** - Interface adaptada para todos os dispositivos
+
+## 🎨 Sistema de Cores Dinâmico
+
+Este projeto implementa um **sistema avançado de aplicação global de paletas de cores** que permite:
+
+- ✅ Mudança instantânea de cores em **TODO o site** (< 10ms)
+- ✅ Transições suaves de 300ms em todos os elementos
+- ✅ Aplicação em: Sidebar, Header, Botões, Badges, Ícones, Gráficos, Forms
+- ✅ Conversão automática HEX → HSL (compatível com Tailwind)
+- ✅ Geração automática de variantes (light, dark, hover, active)
+- ✅ Persistência via localStorage
+- ✅ Re-render automático de componentes dinâmicos (gráficos)
+
+### 📚 Documentação Completa
+
+- **[GLOBAL_COLOR_APPLICATION.md](./GLOBAL_COLOR_APPLICATION.md)** - Documentação técnica completa do sistema de cores
+- **[COLOR_SYSTEM_SUMMARY.md](./COLOR_SYSTEM_SUMMARY.md)** - Resumo executivo da implementação
+- **[REALTIME_COLORS.md](./REALTIME_COLORS.md)** - Guia sobre mudanças em tempo real
+- **[TEST_GUIDE.md](./TEST_GUIDE.md)** - Guia completo de testes do sistema
+- **[DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)** - Guia para desenvolvedores
+- **[API_INTEGRATION.md](./API_INTEGRATION.md)** - Integração com backend
+- **[CUSTOM_INTEGRATION.md](./CUSTOM_INTEGRATION.md)** - Endpoints de customização
 
 ## Project info
 
@@ -50,15 +85,186 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
+## 🛠️ Technologies
 
-This project is built with:
+### Frontend
+- **Vite** - Build tool e dev server
+- **React 18** - UI framework
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Utility-first CSS
+- **Shadcn/ui** - Componentes UI de alta qualidade
+- **Recharts** - Biblioteca de gráficos
+- **Axios** - HTTP client
+- **React Router** - Navegação
+- **Lucide Icons** - Ícones modernos
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Backend (API)
+- **Node.js** + **Express**
+- **PostgreSQL** (via Sequelize ORM)
+- **JWT Authentication**
+- **RESTful API**
+
+### Design System
+- **CSS Variables** - Cores dinâmicas
+- **HSL Color Space** - Compatibilidade com Tailwind
+- **Custom Event System** - Comunicação entre componentes
+- **LocalStorage** - Persistência de preferências
+
+## 🚀 Quick Start
+
+### Pré-requisitos
+- Node.js 18+ ([instalar com nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
+- npm ou yarn
+- Backend rodando em `http://localhost:5001`
+
+### Instalação
+
+```sh
+# Clone o repositório
+git clone <YOUR_GIT_URL>
+
+# Entre no diretório
+cd asset-hub-visuals
+
+# Instale as dependências
+npm install
+
+# Configure as variáveis de ambiente
+cp .env.example .env
+
+# Inicie o servidor de desenvolvimento
+npm run dev
+```
+
+### Variáveis de Ambiente
+
+```env
+VITE_API_URL=http://localhost:5001
+```
+
+## 📖 Como Usar o Sistema de Cores
+
+### 1. Acesse a Página de Customização
+```
+http://localhost:5173/customization
+```
+
+### 2. Selecione uma Paleta
+- Clique em qualquer paleta disponível
+- Veja a mudança **instantânea** em todo o site
+- Toast confirma a aplicação
+
+### 3. Verifique a Aplicação Global
+- ✅ Sidebar muda de cor
+- ✅ Botões atualizam
+- ✅ Gráficos re-renderizam
+- ✅ Badges e ícones mudam
+- ✅ Gradientes se atualizam
+
+### 4. Salve as Mudanças
+- Clique em "Save Changes"
+- Cores são persistidas no localStorage
+- Mantêm-se após reload da página
+
+## 🎯 Estrutura do Projeto
+
+```
+asset-hub-visuals/
+├── src/
+│   ├── lib/
+│   │   └── services/
+│   │       ├── customService.ts    # ⭐ Core do sistema de cores
+│   │       └── assetService.ts     # Serviço de assets
+│   ├── hooks/
+│   │   └── use-color-palette.ts    # Hook de auto-aplicação
+│   ├── pages/
+│   │   ├── Customization.tsx       # Página de customização
+│   │   ├── Dashboard.tsx           # Dashboard com gráficos
+│   │   └── ...
+│   ├── components/
+│   │   ├── Layout/
+│   │   │   ├── AppSidebar.tsx     # Sidebar dinâmica
+│   │   │   └── Header.tsx         # Header dinâmico
+│   │   └── ui/                    # Componentes Shadcn
+│   ├── contexts/
+│   │   └── AuthContext.tsx        # Autenticação
+│   ├── index.css                  # Variáveis CSS globais
+│   └── App.tsx                    # App principal
+├── docs/
+│   ├── GLOBAL_COLOR_APPLICATION.md  # Doc completa
+│   ├── COLOR_SYSTEM_SUMMARY.md      # Resumo
+│   ├── TEST_GUIDE.md                # Guia de testes
+│   └── DEVELOPER_GUIDE.md           # Guia dev
+└── README.md
+```
+
+## 🎨 Variáveis CSS Disponíveis
+
+```css
+/* Cores principais (atualizadas pela paleta) */
+--primary              /* HSL da cor primária */
+--color-primary        /* HEX da cor primária */
+--secondary            /* Cor secundária */
+--tertiary             /* Cor terciária */
+
+/* Variantes automáticas */
+--primary-light        /* +7% luminosidade */
+--primary-dark         /* -8% luminosidade */
+--hover-purple         /* Estado hover */
+--active-purple        /* Estado active */
+
+/* Gradientes dinâmicos */
+--gradient-primary     /* Primary → Secondary */
+--gradient-hero        /* Primary → Secondary → Tertiary */
+
+/* Charts (gráficos) */
+--chart-1 a --chart-5  /* Cores para gráficos */
+
+/* Sidebar */
+--sidebar-primary
+--sidebar-ring
+
+/* Interactive */
+--ring                 /* Focus rings */
+```
+
+## 📊 Exemplo de Uso
+
+### Botão com Cor Primária
+```tsx
+<Button variant="default">
+  Salvar Mudanças
+</Button>
+// Usa bg-primary automaticamente
+```
+
+### Gráfico com Cores Dinâmicas
+```tsx
+<AreaChart data={data}>
+  <Area 
+    stroke="hsl(var(--primary))" 
+    fill="hsl(var(--primary))" 
+  />
+</AreaChart>
+```
+
+### Card com Gradiente
+```tsx
+<div className="bg-gradient-primary p-6">
+  Conteúdo com gradiente dinâmico
+</div>
+```
+
+## 🧪 Testes
+
+Para testar o sistema completo, siga o [TEST_GUIDE.md](./TEST_GUIDE.md) que inclui:
+
+- ✅ Aplicação básica de paleta
+- ✅ Verificação de sidebar e header
+- ✅ Testes de botões e badges
+- ✅ Validação de gráficos
+- ✅ Persistência via localStorage
+- ✅ Múltiplas trocas rápidas
 
 ## How can I deploy this project?
 

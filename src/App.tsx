@@ -5,6 +5,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { useColorPalette } from "@/hooks/use-color-palette";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import AssetCatalog from "./pages/AssetCatalog";
@@ -59,14 +60,18 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
+const App = () => {
+  // Load saved color palette on app mount
+  useColorPalette();
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
             {/* Public Routes */}
             <Route 
               path="/login" 
@@ -161,6 +166,7 @@ const App = () => (
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
